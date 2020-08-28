@@ -4,9 +4,9 @@ on:
   push:
     paths:
       - '*/*/java11.yml'
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '15 */3 * * *'
+  # schedule:
+  #   # * is a special character in YAML so you have to quote this string
+  #   - cron:  '15 */3 * * *'
 jobs:
   java11:
     # internal comment counter: 100
