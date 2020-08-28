@@ -13,15 +13,15 @@ jobs:
         os: [ubuntu-18.04, macOS-latest, windows-2016]
         update: [x, 2, 1, 0]
         package: [jdk]
-        arch: [x64', 'x86']
+        arch: [x64, x86]
         exclude: 
           - os: macOS-latest
-            arch: ['x86']
+            arch: [x86]
         include: 
           - os: windows-2016
             update: 0
             package: jre
-            arch: 'x64'
+            arch: x64
       fail-fast: false
       max-parallel: 5
     name: JDK 12.0.${{ matrix.update }}, ${{ matrix.package }}, ${{ matrix.os }}, ${{ matrix.arch }}
