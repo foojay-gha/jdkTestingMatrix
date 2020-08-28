@@ -1,30 +1,36 @@
-name: Java13
+name: Java13-params
 
 on:
   push:
     paths:
       - '*/*/java13.yml'
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '5 */3 * * *'
       
 jobs:
-  java13:
-    # internal comment counter: 100
+  java13_with_params:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-18.04, macOS-latest, windows-2016]
         update: [x, 4, 3, 2, 1, 0]
+        package: [jre, jdk, jdk+fx]
+        arch: [x64', 'x86']
+        exclude:
+          - os: macOS-latest
+            arch: 'x86'
+          - os: ubuntu-18.04
+            arch: 'x86'
+            package: jdk+fx
       fail-fast: false
       max-parallel: 6
-    name: JDK 13.0.${{ matrix.update }}, ${{ matrix.os }}
+    name: JDK 13.0.${{ matrix.update }}, ${{ matrix.package }}, ${{ matrix.os }}, ${{ matrix.arch }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK
+    - uses: actions/checkout@v2
+    - name: Download Java from Azul
       uses: actions/setup-java@v1
       with:
         java-version: 13.0.${{ matrix.update }}
-    - name: java -version
+        java-package: ${{ matrix.package }}
+        architecture: ${{ matrix.arch }}
+    - name: Check Java Install with get version
       run: java -version

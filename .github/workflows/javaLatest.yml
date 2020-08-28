@@ -1,30 +1,30 @@
-name: JavaLatest
+name: JavaLatestVersion-params
 
 on:
   push:
     paths:
       - '*/*/javaLatest.yml'
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '5 */3 * * *'
       
 jobs:
-  javaLatest:
-    # internal comment counter: 100
+  javaLatestVersion_with_params:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-18.04, macOS-latest, windows-2016]
-        update: [x]
+        version: [x]
+        package: [jre, jdk, jdk+fx]
+        arch: [x64', 'x86']
       fail-fast: false
       max-parallel: 5
-    name: JDK ${{ matrix.update }}, ${{ matrix.os }}
+    name: JDK ${{ matrix.version }}, ${{ matrix.package }}, ${{ matrix.os }}, ${{ matrix.arch }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK
+    - uses: actions/checkout@v2
+    - name: Download Java from Azul
       uses: actions/setup-java@v1
       with:
-        java-version: ${{ matrix.update }}
-    - name: java -version
+        java-version: ${{ matrix.version }}
+        java-package: ${{ matrix.package }}
+        architecture: ${{ matrix.arch }}
+    - name: Check Java Install with get version
       run: java -version

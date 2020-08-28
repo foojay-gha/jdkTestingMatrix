@@ -1,30 +1,30 @@
-
-name: Java6
+name: Java6-params
 
 on:
   push:
     paths:
       - '*/*/java6.yml'
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '27 */24 * * *'
       
 jobs:
-  java6:
+  Java6_with_params:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-18.04, windows-2016]
         update: [x, 119, 113, 107, 103, 99, 97, 93, 89, 87, 83, 79, 77]
+        package: [jdk]
+        arch: ['x64']
       fail-fast: false
       max-parallel: 5
-    name: JDK 6.0.${{ matrix.update }}, ${{ matrix.os }}
+    name: JDK 6.0.${{ matrix.update }}, ${{ matrix.package }}, ${{ matrix.os }}, ${{ matrix.arch }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK
+    - uses: actions/checkout@v2
+    - name: Download Java from Azul
       uses: actions/setup-java@v1
       with:
         java-version: 6.0.${{ matrix.update }}
-    - name: java -version
+        java-package: ${{ matrix.package }}
+        architecture: ${{ matrix.arch }}
+    - name: Check Java Install with get version
       run: java -version

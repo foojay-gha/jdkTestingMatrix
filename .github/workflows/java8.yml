@@ -1,52 +1,38 @@
-name: Java8
+name: Java8-params
 
 on:
   push:
     paths:
-      - '.github/workflows/java8.yml'
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '45 */3 * * *'
+      - '*/*/java8.yml'
 
 jobs:
-  java8:
-    # internal comment counter: 100
+  java8_with_params:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2016]
+        os: [ubuntu-18.04, windows-2016, macOS-latest]
         update: [x, 262, 252, 242, 232, 222, 212, 202, 201, 192, 181, 172, 163, 162, 152, 144, 131, 121, 112, 102, 101, 92, 91, 72, 71]
+        package: [jre, jdk, jdk+fx]
+        arch: [x64', 'x86']
         exclude:
           - os: ubuntu-18.04
             update: 101
-      fail-fast: false
-      max-parallel: 6
-    name: JDK 8.0.${{ matrix.update }}, ${{ matrix.os }}
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: 8.0.${{ matrix.update }}
-    - name: java -version
-      run: java -version
-      
-  java8-mac:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macOS-latest]
-        update: [x, 262, 252, 242, 232, 222, 212, 202, 201, 192, 181, 172, 163, 162, 152, 144, 131]
+          - os: macOS-latest
+            update: [121, 112, 102, 101, 92, 91, 72, 71]
+            arch: 'x86'
+          - package: jdk+fx
+            update: [262, 201, 181, 172, 163, 162, 152, 144, 131, 121, 112, 102, 101, 92, 91, 72, 71]
       fail-fast: false
       max-parallel: 5
-    name: Mac-JDK 8.0.${{ matrix.update }}, ${{ matrix.os }}
+    name: JDK 8.0.${{ matrix.update }}, ${{ matrix.package }}, ${{ matrix.os }}, ${{ matrix.arch }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK
+    - uses: actions/checkout@v2
+    - name: Download Java from Azul
       uses: actions/setup-java@v1
       with:
         java-version: 8.0.${{ matrix.update }}
-    - name: java -version
+        java-package: ${{ matrix.package }}
+        architecture: ${{ matrix.arch }}
+    - name: Check Java Install with get version
       run: java -version

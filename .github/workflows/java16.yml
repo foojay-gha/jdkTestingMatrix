@@ -4,27 +4,31 @@ on:
   push:
     paths:
       - '*/*/java16.yml'
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '5 */8 * * *'
       
 jobs:
-  java16:
+  java16_with_params:
     # internal comment counter: 103
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-18.04, macOS-latest, windows-2016]
-        update: [16.0.0-ea, 16.0.0-ea.5, 16-ea]
+        version: [16.0.0-ea, 16.0.0-ea.5, 16-ea]
+        package: [jdk]
+        arch: [x64', 'x86']
+        exclude:
+          - os: macOS-latest    
+            arch: 'x86'
       fail-fast: false
-      max-parallel: 6
-    name: JDK ${{ matrix.update }}, ${{ matrix.os }}
+      max-parallel: 5
+    name: JDK ${{ matrix.version }}, ${{ matrix.package }}, ${{ matrix.os }}, ${{ matrix.arch }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up JDK
+    - uses: actions/checkout@v2
+    - name: Download Java from Azul
       uses: actions/setup-java@v1
       with:
-        java-version: ${{ matrix.update }}
-    - name: java -version
+        java-version: ${{ matrix.version }}
+        java-package: ${{ matrix.package }}
+        architecture: ${{ matrix.arch }}
+    - name: Check Java Install with get version
       run: java -version
