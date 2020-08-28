@@ -1,4 +1,4 @@
-name: Java16
+name: Java16-params
 
 on:
   push:
